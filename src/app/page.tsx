@@ -3,8 +3,8 @@
 import { useEffect, useRef, useState } from "react";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { initialCode } from "@/config/ide-default";
-import Editor, { Monaco, } from '@monaco-editor/react';
-import { editor } from "monaco-editor";
+import Editor, { Monaco } from '@monaco-editor/react';
+import { editor, } from "monaco-editor";
 import useDebouncedState from "@/components/hook/debounceState";
 
 export default function Page() {
@@ -13,19 +13,15 @@ export default function Page() {
   const [htmlValue, setHtmlValue] = useDebouncedState<string>(initialCode, 500);
   const iframeRef = useRef<HTMLIFrameElement | null>(null);
 
-  // useEffect(() => {
-  //   if (iframeRef.current) {
-  //     let iframe = iframeRef.current;
-
-  //     const doc = iframe.contentDocument;
-  //     doc?.open();
-  //     doc?.write(htmlValue);
-  //     doc?.close();
-  //   }
-  // }, [htmlValue])
+  useEffect(() => {
+    if (editorRef.current) {
+      editorRef.current.onDidChangeCursorPosition((e) => {
+        console.log(e.position.toString())
+      })
+    }
+  }, [editorRef])
 
   function handleEditorDidMount(editor: editor.IStandaloneCodeEditor, monaco: Monaco) {
-    // Use .current as a reference to the underlying object
     if (editorRef.current) {
       editorRef.current = editor;
     }
