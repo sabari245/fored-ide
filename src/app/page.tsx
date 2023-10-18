@@ -10,8 +10,14 @@ import useDebouncedState from "@/components/hook/debounceState";
 export default function Page() {
 
   const editorRef = useRef<editor.IStandaloneCodeEditor | null>(null);
-  const [htmlValue, setHtmlValue] = useDebouncedState<string>(initialCode, 500);
+  const [htmlValue, setHtmlValue] = useDebouncedState<string>(initialCode, 100);
   const iframeRef = useRef<HTMLIFrameElement | null>(null);
+
+  useEffect(() => {
+    if (iframeRef.current) {
+      iframeRef.current.srcdoc = htmlValue
+    }
+  }, [htmlValue])
 
   useEffect(() => {
     if (editorRef.current) {
@@ -47,7 +53,7 @@ export default function Page() {
           onChange={handleEditorChange}
         />
         <ScrollArea className="h-screen bg-green-50 resizeable">
-          <iframe ref={iframeRef} src="https://example.com" style={{ border: "none", width: "100%", height: "100vh" }}>
+          <iframe ref={iframeRef} title="Preview" sandbox="allow-popups-to-escape-sandbox allow-scripts allow-popups allow-forms allow-pointer-lock allow-top-navigation allow-modals" style={{ border: "none", width: "100%", height: "100vh" }}>
 
           </iframe>
         </ScrollArea>
